@@ -1,15 +1,14 @@
 import graphene
-from graphene_django import DjangoObjectType
-from rooms.models import Room
+from .types import RoomListResponse, RoomType
+from .models import Room
+from .queries import resolve_room, resolve_rooms
 
-
-class RoomType(DjangoObjectType):
-    class Meta:
-        model = Room
 
 class Query(object):
 
-    rooms = graphene.List(RoomType)
-
-    def resolve_rooms(self, info):
-        pass
+    rooms = graphene.Field(RoomListResponse,
+                           page=graphene.Int(),
+                           resolver=resolve_rooms)
+    room = graphene.Field(RoomType,
+                          id=graphene.Int(required=True),
+                          resolver=resolve_room)
